@@ -1,4 +1,4 @@
-// Received from BLE_Sender_Oluwasholape.ino
+// Received from Lab/BLE_Sender_Oluwasholape.ino
 // Description: This file processes the signal emitted by the sender script.
 
 #include <ArduinoBLE.h>
