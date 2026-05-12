@@ -1,4 +1,4 @@
-// Received from Lab/BLE_Sender_Oluwasholape.ino
+// Received from https://github.com/Oluwasholape/SS2026_AES_LAB_GROUP_A2/blob/main/Lab/BLE_Sender_Oluwasholape.ino
 // Description: This file processes the signal emitted by the sender script.
 
 #include <ArduinoBLE.h>
