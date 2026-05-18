@@ -1,2 +1,10 @@
-# IoT-Based-Smart-Irrigation-and-Environmental-Monitoring-System-Group-A2
-We are a team developing a smart agriculture system based on Industrial IoT principles. The project focuses on real-time monitoring and automated control using embedded devices and industrial communication protocols, with an emphasis on reliability, scalability, and efficient data exchange.
+# SS2026_AES_Lab_Group_A2
+
+Advanced Embedded Systems Lab - SS2026
+Hochschule Hamm-Lippstadt
+
+## Team Members
+- Boiddo, Sumon
+- Nnachi-Egwu, Nnaemeka
+- Oyemade, Oluwasholape Daniel
+- Tuhin, Md Tawhidur Rahman
