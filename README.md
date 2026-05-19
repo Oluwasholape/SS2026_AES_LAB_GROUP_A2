@@ -19,8 +19,9 @@ Hochschule Hamm-Lippstadt
 - Jumper Wires
 - USB Cables
 - Power Supply / Power Bank
-- Raspberry Pi 
-Full sketch can be found in the projects directory
+- Raspberry Pi
+
+Full sketch can be found in the project directory
 
 ## Repository Structure
 - labs/ — Arduino UNO lab exercises
