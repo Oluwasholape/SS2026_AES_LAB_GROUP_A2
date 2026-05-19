@@ -1,14 +1,4 @@
-/*
-  ArduinoMqttClient - WiFi Simple Sender
 
-  This example connects to a MQTT broker and publishes a message to
-  a topic once a second.
-
-  The circuit:
-  - Arduino MKR 1000, MKR 1010 or Uno WiFi Rev2 board
-
-  This example code is in the public domain.
-*/
 
 #include <ArduinoMqttClient.h>
 #if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_AVR_UNO_WIFI_REV2)
