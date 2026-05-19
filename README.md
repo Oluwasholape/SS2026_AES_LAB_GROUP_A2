@@ -16,6 +16,7 @@ Hochschule Hamm-Lippstadt
 -
 -
 -
+Full sketch can be found in the projects directory
 
 ## Repository Structure
 - labs/ — Arduino UNO lab exercises
