@@ -10,12 +10,16 @@ Hochschule Hamm-Lippstadt
 - Tuhin, Md Tawhidur Rahman
 
 ## Hardware Required for project (as requested by Ali Alhalabi)
--
--
--
--
--
--
+-ESP32
+-Capacitive Soil Moisture Sensor
+-DHT22
+-Relay Module
+-Mini Water Pump
+-Breadboard
+-Jumper Wires
+-USB Cables
+-Power Supply / Power Bank
+-Raspberry Pi 
 Full sketch can be found in the projects directory
 
 ## Repository Structure
