@@ -21,8 +21,8 @@ Hochschule Hamm-Lippstadt
 - Power Supply / Power Bank
 - Raspberry Pi
 
-Full sketch can be found in the project directory
+Full sketch can be found in the [project](https://github.com/Oluwasholape/SS2026_AES_LAB_GROUP_A2/tree/main/project) directory
 
 ## Repository Structure
-- labs/ — Arduino UNO lab exercises
-- project/ — Final project files
+- [labs](https://github.com/Oluwasholape/SS2026_AES_LAB_GROUP_A2/tree/main/labs): Arduino UNO lab exercises
+- [project](https://github.com/Oluwasholape/SS2026_AES_LAB_GROUP_A2/tree/main/project): Final project files
