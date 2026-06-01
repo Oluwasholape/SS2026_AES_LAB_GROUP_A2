@@ -26,13 +26,13 @@ Main Application:
 Automated irrigation and environmental monitoring.
 
 Main Components:
--• ESP32 microcontroller
--• Soil moisture sensor
--• DHT22 temperature and humidity sensor
--• Relay module
--• Water pump 
--• MQTT broker
--• Dashboard platform (Node-RED / ThingsBoard)
+- ESP32 microcontroller
+-Soil moisture sensor
+-DHT22 temperature and humidity sensor
+-Relay module
+-Water pump
+-MQTT broker
+-Dashboard platform (Node-RED / ThingsBoard)
 
 Initial System Architecture:
 
