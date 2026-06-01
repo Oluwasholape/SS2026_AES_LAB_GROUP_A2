@@ -59,20 +59,20 @@ Team Roles:
 
 ## 4. Technologies
 Sensors:
-• DHT22 temperature and humidity sensor
-• Capacitive soil moisture sensor
+- DHT22 temperature and humidity sensor
+- Capacitive soil moisture sensor
 
 Communication Protocol:
-• MQTT (Message Queuing Telemetry Transport)
+- MQTT (Message Queuing Telemetry Transport)
 
 Programming Languages:
-• C/C++ for ESP32 programming
-• Python/JavaScript for dashboard integration (optional)
+- C/C++ for ESP32 programming
+- Python/JavaScript for dashboard integration (optional)
 
 Development Tools:
-• Arduino IDE / PlatformIO
-• Mosquitto MQTT Broker
-• GitHub
+- Arduino IDE / PlatformIO
+- Mosquitto MQTT Broker
+- GitHub
 
 
 ## 5. Implementation
