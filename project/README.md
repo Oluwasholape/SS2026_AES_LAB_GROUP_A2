@@ -44,17 +44,17 @@ Project Method:
 The project follows a collaborative engineering workflow using GitHub for version control and task management.
 
 Task Breakdown:
-• Hardware integration
-• Embedded programming
-• MQTT communication setup
-• Dashboard implementation
-• Documentation and validation
+- Hardware integration
+- Embedded programming
+- MQTT communication setup
+- Dashboard implementation
+- Documentation and validation
 
 Team Roles:
-• Boiddo, Sumon: Hardware and sensors
-• Nnachi-Egwu Nnaemeka: Embedded software development
-• Oyemade, Oluwasholape Daniel: MQTT communication and dashboard
-• Tuhin, Md Tawhidur Rahman: Documentation, testing, and validation
+- Boiddo, Sumon: Hardware and sensors
+- Nnachi-Egwu Nnaemeka: Embedded software development
+- Oyemade, Oluwasholape Daniel: MQTT communication and dashboard
+- Tuhin, Md Tawhidur Rahman: Documentation, testing, and validation
 
 
 ## 4. Technologies
@@ -80,31 +80,31 @@ Static Structure:
 The system consists of distributed sensor nodes connected to an ESP32 microcontroller. The ESP32 processes sensor data and publishes the data using MQTT communication.
 
 Main Modules:
-• Sensor acquisition module
-• MQTT communication module
-• Irrigation control module
-• Dashboard visualization module
+- Sensor acquisition module
+- MQTT communication module
+- Irrigation control module
+- Dashboard visualization module
 
 Use Cases:
-• Monitor soil moisture levels
-• Display environmental conditions
-• Automatically activate irrigation
-• Log and analyze sensor data
+- Monitor soil moisture levels
+- Display environmental conditions
+- Automatically activate irrigation
+- Log and analyze sensor data
 
 
 ## 6. Results
 Expected Results:
-• Real-time monitoring of environmental conditions
-• Reliable MQTT-based communication
-• Automated irrigation control
-• Dashboard visualization of sensor values
-• Scalable architecture for additional sensor nodes
+- Real-time monitoring of environmental conditions
+- Reliable MQTT-based communication
+- Automated irrigation control
+- Dashboard visualization of sensor values
+- Scalable architecture for additional sensor nodes
 
 Planned Validation:
-• Communication latency testing
-• Reliability testing
-• Sensor response verification
-• Irrigation trigger testing
+- Communication latency testing
+- Reliability testing
+- Sensor response verification
+- Irrigation trigger testing
 
 
 ## 7. Sources / References
