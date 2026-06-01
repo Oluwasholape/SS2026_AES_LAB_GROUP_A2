@@ -5,10 +5,10 @@
 ---
 
 ## Team Members
-* **Boiddo, Sumon** - *Responsible for: [Sections/Tasks]*
-* **Nnachi-Egwu Nnaemeka** - *Responsible for: [Sections/Tasks]*
-* **Oyemade, Oluwasholape Daniel** - *Responsible for: [Sections/Tasks]*
-* **Tuhin, Md Tawhidur Rahman** - *Responsible for: [Sections/Tasks]*
+* **Boiddo, Sumon** 
+* **Nnachi-Egwu Nnaemeka** 
+* **Oyemade, Oluwasholape Daniel**  
+* **Tuhin, Md Tawhidur Rahman** 
 
 ---
 
@@ -26,13 +26,13 @@ Main Application:
 Automated irrigation and environmental monitoring.
 
 Main Components:
-• ESP32 microcontroller
-• Soil moisture sensor
-• DHT22 temperature and humidity sensor
-• Relay module
-• Water pump
-• MQTT broker
-• Dashboard platform (Node-RED / ThingsBoard)
+• -ESP32 microcontroller
+• -Soil moisture sensor
+• -DHT22 temperature and humidity sensor
+• -Relay module
+• -Water pump 
+• -MQTT broker
+• -Dashboard platform (Node-RED / ThingsBoard)
 
 Initial System Architecture:
 
@@ -51,10 +51,10 @@ Task Breakdown:
 • Documentation and validation
 
 Team Roles:
-• Member 1: Hardware and sensors
-• Member 2: Embedded software development
-• Member 3: MQTT communication and dashboard
-• Member 4: Documentation, testing, and validation
+• Boiddo, Sumon: Hardware and sensors
+• Nnachi-Egwu Nnaemeka: Embedded software development
+• Oyemade, Oluwasholape Daniel: MQTT communication and dashboard
+• Tuhin, Md Tawhidur Rahman: Documentation, testing, and validation
 
 
 ## 4. Technologies
