@@ -1,6 +1,4 @@
-# Documentation
-
-# AtmosPi
+# Documentation - AtmosPi
 ### A Real-Time WSN (Wireless Sensor Network) for Industrial Environmental Safety
 
 ---
