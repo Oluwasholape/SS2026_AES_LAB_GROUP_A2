@@ -1,18 +1,13 @@
-# Documentation - AtmosPi
+# Documentation for 'AtmosPi'
 ### A Real-Time WSN (Wireless Sensor Network) for Industrial Environmental Safety
 
 ---
 
 ## Team Members
-
-| Field | Details |
-|---|---|
-| Team | Team A2 |
-| Member 1 | Boiddo, Sumon |
-| Member 2 | Nnachi-Egwu, Nnaemeka |
-| Member 3 | Oyemade, Oluwasholape Daniel |
-| Member 4 | Tuhin, Md Tawhidur Rahman |
-| Submission Date | 03.06.2026 |
+- Boiddo, Sumon
+- Nnachi-Egwu, Nnaemeka
+- Oyemade, Oluwasholape Daniel
+- Tuhin, Md Tawhidur Rahman
 
 ---
 
