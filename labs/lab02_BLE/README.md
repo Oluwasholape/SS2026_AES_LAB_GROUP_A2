@@ -1,4 +1,4 @@
-# Lab 02: FArduino WiFi, Sensors and Bluetooth Low Energy
+# Lab 02: Arduino WiFi, Sensors and Bluetooth Low Energy
 
 #### Done by:
 - Boiddo, Sumon
