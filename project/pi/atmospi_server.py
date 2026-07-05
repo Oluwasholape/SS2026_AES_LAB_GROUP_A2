@@ -183,6 +183,7 @@ def api_latest():
     with state_lock:
         nodes = {}
         summary = {"normal": 0, "warning": 0, "critical": 0, "offline": 0}
+        fault_count = 0
         for nid, meta in NODES.items():
             entry = latest.get(nid)
             online = bool(entry and now - entry["ts"] <= ONLINE_WINDOW_S)
@@ -199,6 +200,7 @@ def api_latest():
                         fresh_metrics[m] = v
 
             missing = [m for m in meta["metrics"] if m not in fresh_metrics] if online else []
+            fault = bool(online and missing)
 
             alarm = compute_alarm(fresh_metrics, online)
             if online and missing and ALARM_RANK["warning"] > ALARM_RANK[alarm]:
@@ -208,6 +210,8 @@ def api_latest():
                 alarm = "warning"
 
             summary[alarm] += 1
+            if fault:
+                fault_count += 1
             nodes[nid] = {
                 "label": meta["label"], "sensor": meta["sensor"],
                 "zone": meta["zone"],
@@ -216,11 +220,13 @@ def api_latest():
                 "metrics": fresh_metrics,
                 "missing": missing,
                 "alarm": alarm,
+                "fault": fault,
             }
         gw_online = (gateway_status["value"] == "online")
         payload = {
             "nodes": nodes,
             "summary": summary,
+            "fault_count": fault_count,
             "gateway": {"online": gw_online, "status": gateway_status["value"]},
             "server": {"uptime_s": int(now - started_at),
                        "messages": msg_count,
