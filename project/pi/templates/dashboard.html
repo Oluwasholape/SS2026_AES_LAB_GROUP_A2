@@ -94,6 +94,7 @@
   .val.light .num{color:#b8890b}
 
   .card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+  .fault{font-size:11px;color:var(--warn-fg);margin-top:8px;font-weight:600}
   .age{font-size:11px;color:var(--muted);font-family:var(--mono)}
   .badge{font-size:11px;font-weight:700;letter-spacing:.03em;padding:3px 9px;
          border-radius:6px;text-transform:uppercase}
@@ -282,6 +283,7 @@ function renderCards(data){
         <h2><span class="dot ${n.online?"on":"off"}"></span>${n.label}</h2>
         <div class="meta">${n.sensor} · ${n.zone}</div>
         <div class="vals">${vals}</div>
+        ${(n.missing&&n.missing.length)?`<div class="fault">sensor fault: no ${n.missing.map(m=>METRIC_LABEL[m]||m).join(", ")}</div>`:""}
         <div class="card-foot">
           <span class="age">${n.online?("last packet "+n.age_s+" s ago"):"offline"}</span>
           <span class="badge ${n.alarm}">${n.alarm}</span>
