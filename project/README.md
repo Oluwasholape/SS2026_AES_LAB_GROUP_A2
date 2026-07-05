@@ -120,7 +120,7 @@ Continuous, multi-zone climate monitoring with live remote visualization: curren
 * **HTTP/REST + JSON** between the Pi and the dashboard clients (`/api/latest`, `/api/history`, `/api/export.csv`).
 * **Tailscale (WireGuard)** as encrypted overlay network. Every participant (Pi, gateway laptop, MacBook, iPhone, monitoring PC) gets a stable 100.x address, reachable across NATs and different physical networks with **no port forwarding and no public exposure of the broker** — the security answer to "your MQTT broker is on the internet?".
 
-### Programming languages and tools `[Oluwasholape / all]`
+### Programming languages and tools `[all]`
 
 * **C/C++ (Arduino)** for the three node firmwares.
 * **Python 3** for the gateway bridge (`pyserial`, `paho-mqtt`) and the Pi server (`paho-mqtt`, `Flask`, `sqlite3`).
