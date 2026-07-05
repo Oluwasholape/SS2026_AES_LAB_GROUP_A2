@@ -95,8 +95,8 @@ Continuous, multi-zone climate monitoring with live remote visualization: curren
 
 | Work package | Owner | Deliverables |
 |---|---|---|
-| WP1 Platform & networking | Sumon | Pi OS setup (headless, SSH), Mosquitto configuration, Tailscale tailnet incl. onboarding of the gateway laptop, systemd deployment |
-| WP2 Sensor nodes & gateway | Tuhin | Sensor selection per node, wiring, three Arduino sketches, `serial_bridge.py` operation and COM-port configuration |
+| WP1 Platform & networking | Nnaemeka | Pi OS setup (headless, SSH), Mosquitto configuration, Tailscale tailnet incl. onboarding of the gateway laptop, systemd deployment |
+| WP2 Sensor nodes & gateway | Nnaemeka, Sumon, Tuhin | Sensor selection per node, wiring, three Arduino sketches, `serial_bridge.py` operation and COM-port configuration |
 | WP3 Visualization | Oluwasholape | Flask REST API consumption, responsive dashboard (desktop + mobile), custom canvas charting, CSV export UI |
 | WP4 Architecture & integration | Nnaemeka | End-to-end architecture, topic/payload design, `atmospi_server.py` collector + API, integration tests, documentation, presentation dramaturgy |
 
