@@ -20,7 +20,7 @@ Revised: 04.07.2026
 | Sumon Boiddo | Raspberry Pi platform: OS, Mosquitto broker, Tailscale, service deployment |
 | Md Tawhidur Rahman Tuhin | Sensor nodes: wiring, Arduino firmware, gateway bridge operation |
 | Oluwasholape Daniel Oyemade | Dashboard: web UI, visualization, REST API integration |
-| Nnaemeka Nnachi-Egwu | System architecture, integration and testing, project management, documentation lead |
+| Nnaemeka Nnachi-Egwu | Project management, integration and testing, system architecture, documentation lead |
 
 ---
 
