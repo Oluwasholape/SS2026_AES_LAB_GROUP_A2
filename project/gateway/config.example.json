@@ -1,0 +1,11 @@
+{
+  "broker_host": "100.85.200.42",
+  "broker_port": 1883,
+  "baud": 9600,
+  "serial_ports": [
+    "COM3",
+    "COM4",
+    "COM5"
+  ],
+  "_note": "Leave serial_ports as [] to auto-detect Arduinos. On Windows find ports in Device Manager > Ports (COM & LPT), or run: python -m serial.tools.list_ports"
+}
