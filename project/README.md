@@ -95,8 +95,8 @@ Continuous, multi-zone climate monitoring with live remote visualization: curren
 
 | Work package | Owner | Deliverables |
 |---|---|---|
-| WP1 Platform & networking | Nnaemeka | Pi OS setup (headless, SSH), Mosquitto configuration, Tailscale tailnet incl. onboarding of the gateway laptop, systemd deployment |
-| WP2 Sensor nodes & gateway | Nnaemeka, Sumon, Tuhin | Sensor selection per node, wiring, three Arduino sketches, `serial_bridge.py` operation and COM-port configuration |
+| WP1 Platform & networking | Nnaemeka / Sumon | Pi OS setup (headless, SSH), Mosquitto configuration, Tailscale tailnet incl. onboarding of the gateway laptop, systemd deployment |
+| WP2 Sensor nodes & gateway | Nnaemeka / Tuhin | Sensor selection per node, wiring, three Arduino sketches, `serial_bridge.py` operation and COM-port configuration |
 | WP3 Visualization | Oluwasholape | Flask REST API consumption, responsive dashboard (desktop + mobile), custom canvas charting, CSV export UI |
 | WP4 Architecture & integration | Nnaemeka | End-to-end architecture, topic/payload design, `atmospi_server.py` collector + API, integration tests, documentation, presentation dramaturgy |
 
@@ -106,14 +106,14 @@ Continuous, multi-zone climate monitoring with live remote visualization: curren
 
 ## Technologies `[all — per subsection]`
 
-### Sensors `[Tuhin]`
+### Sensors `[Nnaemeka / Tuhin]`
 
 * **KY-015 / DHT11** — combined temperature and humidity sensor with a proprietary single-wire digital protocol; module includes the pull-up resistor. Read via the Adafruit DHT library. Resolution 1 °C / 1 %RH — coarse but delivers two metrics from one part.
 * **KY-001 / DS18B20** — digital thermometer on the Dallas **1-Wire** bus, 12-bit resolution (0.0625 °C), ±0.5 °C accuracy; module includes the 4.7 kΩ bus pull-up. Read via OneWire + DallasTemperature libraries.
 * **KY-013 / NTC thermistor** — pure analog measurement: the 10 kΩ NTC in a voltage divider is sampled by the Arduino's 10-bit ADC and converted to °C with the **Steinhart–Hart equation** in firmware. Chosen deliberately so the project covers the full sensor-interface spectrum discussed in the lecture: analog + ADC, proprietary digital, and a standardized field bus (1-Wire).
 * **KY-018 / LDR photoresistor** — analog light level via voltage divider, one per node, enabling a light comparison across all three zones.
 
-### Communication protocols `[Sumon / Nnaemeka]`
+### Communication protocols `[Nnaemeka / Sumon]`
 
 * **USB serial (UART, 9600 baud)** between the nodes and the gateway — line-delimited JSON, one message per node every 2 s.
 * **MQTT 3.1.1** (publish/subscribe) between gateway, broker and collector. Topic schema: `atmospi/<node_id>/data` for measurements; `atmospi/gateway/status` as a retained **Last-Will** topic, so the dashboard can show a gateway outage within the keep-alive window. Broker: **Eclipse Mosquitto** on the Pi (as in Lab 05).
