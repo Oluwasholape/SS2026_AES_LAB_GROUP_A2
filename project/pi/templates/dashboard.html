@@ -32,6 +32,7 @@
     --warn-bg: #fdf1dd; --warn-fg: #92590a; --warn-line: #d9821b;
     --crit-bg: #fde8e6; --crit-fg: #a4241b; --crit-line: #d93025;
     --off-bg:  #eceef1; --off-fg:  #4b5563; --off-line:  #8a97a8;
+    --fault-bg: #e7e5fb; --fault-fg: #4338ca;
 
     --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
     --sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -57,6 +58,7 @@
   .pill.warn{background:var(--warn-bg);color:var(--warn-fg)}
   .pill.crit{background:var(--crit-bg);color:var(--crit-fg)}
   .pill.off{background:var(--off-bg);color:var(--off-fg)}
+  .pill.fault{background:var(--fault-bg);color:var(--fault-fg)}
 
   /* signature element: the data journey across three networks ------------ */
   .journey{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 22px}
@@ -102,6 +104,7 @@
   .badge.warning{background:var(--warn-bg);color:var(--warn-fg)}
   .badge.critical{background:var(--crit-bg);color:var(--crit-fg)}
   .badge.offline{background:var(--off-bg);color:var(--off-fg)}
+  .badge.fault{background:var(--fault-bg);color:var(--fault-fg);margin-left:6px}
 
   /* ------------------------------------------------------------ charts -- */
   .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -148,6 +151,7 @@
     <span class="pill warn"  id="p-warning">0 warning</span>
     <span class="pill crit"  id="p-critical">0 critical</span>
     <span class="pill off"   id="p-offline">0 offline</span>
+    <span class="pill fault" id="p-fault">0 sensor faults</span>
   </div>
 </header>
 
@@ -286,7 +290,7 @@ function renderCards(data){
         ${(n.missing&&n.missing.length)?`<div class="fault">sensor fault: no ${n.missing.map(m=>METRIC_LABEL[m]||m).join(", ")}</div>`:""}
         <div class="card-foot">
           <span class="age">${n.online?("last packet "+n.age_s+" s ago"):"offline"}</span>
-          <span class="badge ${n.alarm}">${n.alarm}</span>
+          <span><span class="badge ${n.alarm}">${n.alarm}</span>${n.fault?'<span class="badge fault">sensor fault</span>':''}</span>
         </div>
       </div>`);
   }
@@ -304,6 +308,7 @@ function renderCards(data){
   document.getElementById("p-warning").textContent =(s.warning||0)+" warning";
   document.getElementById("p-critical").textContent=(s.critical||0)+" critical";
   document.getElementById("p-offline").textContent =(s.offline||0)+" offline";
+  document.getElementById("p-fault").textContent = (data.fault_count||0)+" sensor fault"+(data.fault_count===1?"":"s");
 }
 
 let historyMinutes=30;
