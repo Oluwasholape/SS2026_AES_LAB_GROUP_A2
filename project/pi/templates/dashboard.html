@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AtmosPi — live environment monitor</title>
+<style>
+  /* ------------------------------------------------------------ tokens --
+     Light "control panel" theme: this is the visual language of a real
+     industrial HMI/SCADA screen, not a generic light-mode default — pale
+     cool panels, monospace data readouts, and traffic-light severity
+     colors reserved strictly for alarm state (never reused for chart
+     lines, so the two colour languages never compete for meaning).       */
+  :root{
+    --bg:      #eef1f4;
+    --panel:   #ffffff;
+    --panel-2: #f5f7f9;
+    --line:    #dbe1e7;
+    --ink:     #1c242c;
+    --muted:   #5c6b78;
+
+    --chart-a: #2f6fed;   /* node1 temp line (DHT11)   */
+    --chart-b: #d9662a;   /* node2 temp line (DS18B20) */
+    --chart-c: #7b3fe4;   /* node3 temp line (NTC)     */
+    --chart-d: #eab308;   /* node1 light line          */
+    --chart-e: #16a34a;   /* node2 light line          */
+    --chart-f: #38bdf8;   /* node3 light line          */
+    --chart-hum: #0891b2; /* node1 humidity line       */
+
+    /* severity language: reserved exclusively for alarm state */
+    --ok-bg:   #e3f6ea; --ok-fg:   #16793f; --ok-line:   #1f9d55;
+    --warn-bg: #fdf1dd; --warn-fg: #92590a; --warn-line: #d9821b;
+    --crit-bg: #fde8e6; --crit-fg: #a4241b; --crit-line: #d93025;
+    --off-bg:  #eceef1; --off-fg:  #4b5563; --off-line:  #8a97a8;
+    --fault-bg: #e7e5fb; --fault-fg: #4338ca;
+
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+    --sans: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+       padding:20px clamp(12px,3vw,40px) 40px}
+  a{color:var(--chart-a)}
+
+  /* ------------------------------------------------------------ header -- */
+  header{margin-bottom:16px}
+  .title-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px}
+  h1{font-size:clamp(22px,3.4vw,32px);font-weight:700;letter-spacing:.01em}
+  h1 .pi{color:var(--chart-b)}
+  .sub{color:var(--muted);font-size:14px}
+  .clock{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--muted)}
+
+  .status-line{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px;
+               font-size:13px;color:var(--muted)}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;
+        font-family:var(--mono);font-weight:600;font-size:12px}
+  .pill.ok{background:var(--ok-bg);color:var(--ok-fg)}
+  .pill.warn{background:var(--warn-bg);color:var(--warn-fg)}
+  .pill.crit{background:var(--crit-bg);color:var(--crit-fg)}
+  .pill.off{background:var(--off-bg);color:var(--off-fg)}
+  .pill.fault{background:var(--fault-bg);color:var(--fault-fg)}
+
+  /* signature element: the data journey across three networks ------------ */
+  .journey{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 22px}
+  .hop{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+       padding:10px 12px;position:relative;box-shadow:0 1px 2px rgba(20,30,40,.04)}
+  .hop:not(:last-child)::after{content:"→";position:absolute;right:-13px;top:50%;
+       transform:translateY(-50%);color:var(--muted);z-index:2;font-size:14px}
+  .hop .where{font-size:13px;font-weight:600}
+  .hop .net{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;
+       background:var(--muted);margin-right:6px;vertical-align:1px}
+  .dot.on{background:var(--ok-line);animation:pulse 2s infinite}
+  .dot.off{background:var(--crit-line)}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(31,157,85,.45)}
+                   50%{box-shadow:0 0 0 5px rgba(31,157,85,0)}}
+  @media (prefers-reduced-motion: reduce){.dot.on{animation:none}}
+
+  /* -------------------------------------------------------- node cards -- */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:16px;border-top:6px solid var(--off-line);
+        box-shadow:0 1px 3px rgba(20,30,40,.05)}
+  .card.normal{border-top-color:var(--ok-line)}
+  .card.warning{border-top-color:var(--warn-line)}
+  .card.critical{border-top-color:var(--crit-line)}
+  .card.offline{border-top-color:var(--off-line);opacity:.75}
+  .card h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .card .meta{font-size:12px;color:var(--muted);margin:2px 0 12px}
+  .vals{display:flex;gap:20px;flex-wrap:wrap}
+  .val .num{font-family:var(--mono);font-size:clamp(22px,2.4vw,30px);font-weight:700}
+  .val .unit{font-size:14px;color:var(--muted)}
+  .val .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .val.temp  .num{color:var(--chart-a)}
+  .val.hum   .num{color:var(--chart-hum)}
+  .val.light .num{color:#b8890b}
+
+  .card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+  .fault{font-size:11px;color:var(--warn-fg);margin-top:8px;font-weight:600}
+  .age{font-size:11px;color:var(--muted);font-family:var(--mono)}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.03em;padding:3px 9px;
+         border-radius:6px;text-transform:uppercase}
+  .badge.normal{background:var(--ok-bg);color:var(--ok-fg)}
+  .badge.warning{background:var(--warn-bg);color:var(--warn-fg)}
+  .badge.critical{background:var(--crit-bg);color:var(--crit-fg)}
+  .badge.offline{background:var(--off-bg);color:var(--off-fg)}
+  .badge.fault{background:var(--fault-bg);color:var(--fault-fg);margin-left:6px}
+
+  /* ------------------------------------------------------------ charts -- */
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .chart{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+         padding:14px 16px;box-shadow:0 1px 3px rgba(20,30,40,.05)}
+  .chart.wide{grid-column:1 / -1}
+  .chart h3{font-size:14px;font-weight:700;margin-bottom:2px}
+  .chart .legend{font-size:11px;color:var(--muted);margin-bottom:8px}
+  .legend b{font-weight:700}
+  canvas{width:100%;height:220px;display:block}
+
+  .toolbar{display:flex;align-items:center;gap:10px;margin:18px 0 12px;flex-wrap:wrap}
+  .toolbar span{font-size:13px;color:var(--muted)}
+  .rbtn{background:var(--panel);color:var(--muted);border:1px solid var(--line);
+        border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer}
+  .rbtn.active{color:var(--ink);border-color:var(--muted);background:var(--panel-2)}
+  .rbtn:focus-visible{outline:2px solid var(--chart-a)}
+
+  footer{margin-top:22px;font-size:12px;color:var(--muted);font-family:var(--mono);
+         display:flex;gap:18px;flex-wrap:wrap}
+
+  /* ------------------------------------------------------------ mobile -- */
+  @media (max-width:840px){
+    .cards{grid-template-columns:1fr}
+    .charts{grid-template-columns:1fr}
+    .journey{grid-template-columns:repeat(2,1fr)}
+    .hop:not(:last-child)::after{content:""}
+    canvas{height:170px}
+    .vals{gap:14px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <h1>Atmos<span class="pi">Pi</span></h1>
+    <div class="sub">distributed environment monitor · Group A2 · AES Lab SS2026</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+  <div class="status-line">
+    <span>System status</span>
+    <span class="pill ok"    id="p-normal">0 normal</span>
+    <span class="pill warn"  id="p-warning">0 warning</span>
+    <span class="pill crit"  id="p-critical">0 critical</span>
+    <span class="pill off"   id="p-offline">0 offline</span>
+    <span class="pill fault" id="p-fault">0 sensor faults</span>
+  </div>
+</header>
+
+<!-- The story of one reading: three physical locations, three networks,
+     stitched together by MQTT over a Tailscale VPN. -->
+<div class="journey">
+  <div class="hop"><span class="dot" id="d-nodes"></span>
+    <span class="where">Sensor nodes ×3</span>
+    <div class="net">Arduino UNO WiFi R2 · USB serial</div></div>
+  <div class="hop"><span class="dot" id="d-gw"></span>
+    <span class="where">Gateway laptop</span>
+    <div class="net">L3 hallway · phone hotspot · Tailscale</div></div>
+  <div class="hop"><span class="dot" id="d-pi"></span>
+    <span class="where">Raspberry Pi 3B</span>
+    <div class="net">home Wi-Fi · Mosquitto + Flask</div></div>
+  <div class="hop"><span class="dot on"></span>
+    <span class="where">This dashboard</span>
+    <div class="net">campus Wi-Fi · Tailscale</div></div>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<div class="toolbar">
+  <span>History</span>
+  <button class="rbtn" data-min="15">15 min</button>
+  <button class="rbtn active" data-min="30">30 min</button>
+  <button class="rbtn" data-min="60">1 h</button>
+  <button class="rbtn" data-min="360">6 h</button>
+</div>
+
+<div class="charts">
+  <div class="chart wide">
+    <h3>Temperature — three sensing technologies, side by side</h3>
+    <div class="legend">
+      <b style="color:var(--chart-a)">■</b> node1 DHT11 &nbsp;
+      <b style="color:var(--chart-b)">■</b> node2 DS18B20 &nbsp;
+      <b style="color:var(--chart-c)">■</b> node3 NTC analog
+    </div>
+    <canvas id="c-temp"></canvas>
+  </div>
+  <div class="chart">
+    <h3>Light level per zone</h3>
+    <div class="legend">
+      <b style="color:var(--chart-d)">■</b> node1 &nbsp;
+      <b style="color:var(--chart-e)">■</b> node2 &nbsp;
+      <b style="color:var(--chart-f)">■</b> node3
+    </div>
+    <canvas id="c-light"></canvas>
+  </div>
+  <div class="chart">
+    <h3>Relative humidity (node1)</h3>
+    <div class="legend"><b style="color:var(--chart-hum)">■</b> DHT11 %RH</div>
+    <canvas id="c-hum"></canvas>
+  </div>
+</div>
+
+<footer>
+  <span id="f-uptime">server uptime —</span>
+  <span id="f-msgs">messages —</span>
+  <span><a href="/api/export.csv">export all readings (CSV)</a></span>
+</footer>
+
+<script>
+/* ------------------------------------------------------ tiny line chart --
+   Self-contained canvas plotter: no CDN, no libraries. Everything the
+   audience sees is served by the Raspberry Pi itself.                      */
+function drawChart(canvas, seriesList, unit){
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr,dpr); ctx.clearRect(0,0,w,h);
+
+  const padL=42, padR=8, padT=8, padB=20;
+  const plotW=w-padL-padR, plotH=h-padT-padB;
+
+  const all = seriesList.flatMap(s=>s.points);
+  if(!all.length){
+    ctx.fillStyle="#5c6b78"; ctx.font="13px sans-serif";
+    ctx.fillText("waiting for data …", padL, h/2);
+    return;
+  }
+  let tMin=Math.min(...all.map(p=>p[0])), tMax=Math.max(...all.map(p=>p[0]));
+  let vMin=Math.min(...all.map(p=>p[1])), vMax=Math.max(...all.map(p=>p[1]));
+  if(tMax-tMin<1) tMax=tMin+1;
+  const span=(vMax-vMin)||1; vMin-=span*0.12; vMax+=span*0.12;
+
+  const X=t=>padL+(t-tMin)/(tMax-tMin)*plotW;
+  const Y=v=>padT+(1-(v-vMin)/(vMax-vMin))*plotH;
+
+  // grid + y labels
+  ctx.strokeStyle="#dbe1e7"; ctx.fillStyle="#5c6b78";
+  ctx.font="10px ui-monospace,monospace"; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const v=vMin+(vMax-vMin)*i/4, y=Y(v);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+    ctx.fillText(v.toFixed(1)+unit, 2, y+3);
+  }
+  // x labels (start / end time)
+  const fmt=t=>new Date(t*1000).toTimeString().slice(0,5);
+  ctx.fillText(fmt(tMin), padL, h-6);
+  ctx.fillText(fmt(tMax), w-padR-30, h-6);
+
+  // series
+  for(const s of seriesList){
+    if(!s.points.length) continue;
+    ctx.strokeStyle=s.color; ctx.lineWidth=2.2; ctx.beginPath();
+    s.points.forEach((p,i)=> i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1])));
+    ctx.stroke();
+    const last=s.points[s.points.length-1];
+    ctx.fillStyle=s.color; ctx.beginPath();
+    ctx.arc(X(last[0]),Y(last[1]),3,0,7); ctx.fill();
+  }
+}
+
+/* -------------------------------------------------------------- render -- */
+const METRIC_CLASS={temp_c:"temp",hum_pct:"hum",light_pct:"light"};
+const METRIC_LABEL={temp_c:"Temp",hum_pct:"Humidity",light_pct:"Light"};
+const METRIC_UNIT ={temp_c:"°C", hum_pct:"%",       light_pct:"%"};
+
+function renderCards(data){
+  const box=document.getElementById("cards"); box.innerHTML="";
+  let anyOnline=false;
+  for(const [nid,n] of Object.entries(data.nodes)){
+    if(n.online) anyOnline=true;
+    const vals=Object.entries(n.metrics).map(([m,v])=>`
+      <div class="val ${METRIC_CLASS[m]||""}">
+        <div class="lab">${METRIC_LABEL[m]||m}</div>
+        <span class="num">${(+v).toFixed(1)}</span><span class="unit">${METRIC_UNIT[m]||""}</span>
+      </div>`).join("") || `<div class="val"><span class="unit">no data yet</span></div>`;
+    box.insertAdjacentHTML("beforeend",`
+      <div class="card ${n.alarm}">
+        <h2><span class="dot ${n.online?"on":"off"}"></span>${n.label}</h2>
+        <div class="meta">${n.sensor} · ${n.zone}</div>
+        <div class="vals">${vals}</div>
+        ${(n.missing&&n.missing.length)?`<div class="fault">sensor fault: no ${n.missing.map(m=>METRIC_LABEL[m]||m).join(", ")}</div>`:""}
+        <div class="card-foot">
+          <span class="age">${n.online?("last packet "+n.age_s+" s ago"):"offline"}</span>
+          <span><span class="badge ${n.alarm}">${n.alarm}</span>${n.fault?'<span class="badge fault">sensor fault</span>':''}</span>
+        </div>
+      </div>`);
+  }
+  document.getElementById("d-nodes").className="dot "+(anyOnline?"on":"off");
+  document.getElementById("d-gw").className="dot "+(data.gateway.online?"on":"off");
+  document.getElementById("d-pi").className="dot on";  // if you can read this, the Pi answered
+  document.getElementById("f-uptime").textContent=
+      "server uptime "+Math.floor(data.server.uptime_s/60)+" min";
+  document.getElementById("f-msgs").textContent=
+      "messages received "+data.server.messages;
+  document.getElementById("clock").textContent=data.server.time;
+
+  const s=data.summary||{};
+  document.getElementById("p-normal").textContent  =(s.normal||0)+" normal";
+  document.getElementById("p-warning").textContent =(s.warning||0)+" warning";
+  document.getElementById("p-critical").textContent=(s.critical||0)+" critical";
+  document.getElementById("p-offline").textContent =(s.offline||0)+" offline";
+  document.getElementById("p-fault").textContent = (data.fault_count||0)+" sensor fault"+(data.fault_count===1?"":"s");
+}
+
+let historyMinutes=30;
+async function pollLatest(){
+  try{ renderCards(await (await fetch("/api/latest")).json()); }catch(e){}
+}
+async function pollHistory(){
+  try{
+    const d=await (await fetch("/api/history?minutes="+historyMinutes)).json();
+    const g=(n,m)=>(d.series[n]&&d.series[n][m])||[];
+    drawChart(document.getElementById("c-temp"),[
+      {points:g("node1","temp_c"),color:getComputedColor("--chart-a")},
+      {points:g("node2","temp_c"),color:getComputedColor("--chart-b")},
+      {points:g("node3","temp_c"),color:getComputedColor("--chart-c")}],"°");
+    drawChart(document.getElementById("c-light"),[
+      {points:g("node1","light_pct"),color:getComputedColor("--chart-d")},
+      {points:g("node2","light_pct"),color:getComputedColor("--chart-e")},
+      {points:g("node3","light_pct"),color:getComputedColor("--chart-f")}],"%");
+    drawChart(document.getElementById("c-hum"),[
+      {points:g("node1","hum_pct"),color:getComputedColor("--chart-hum")}],"%");
+  }catch(e){}
+}
+function getComputedColor(varName){
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "#2f6fed";
+}
+document.querySelectorAll(".rbtn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".rbtn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active"); historyMinutes=+b.dataset.min; pollHistory();
+}));
+window.addEventListener("resize",pollHistory);
+
+pollLatest(); pollHistory();
+setInterval(pollLatest,2000);
+setInterval(pollHistory,10000);
+</script>
+</body>
+</html>

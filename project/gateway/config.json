@@ -1,0 +1,6 @@
+{
+  "broker_host": "100.85.200.42",
+  "broker_port": 1883,
+  "baud": 9600,
+  "serial_ports": ["COM12", "COM13", "COM14"]
+}
