@@ -22,7 +22,7 @@
 
 ---
 
-## Introduction `[Nnaemeka]`
+## Introduction `[Nnaemeka / Sumon]`
 
 The **Internet of Things (IoT)** describes systems in which physical devices, such as sensors, actuators and embedded computers, exchange data over networks and make that data available to services and end users. A **Wireless Sensor Network (WSN)** is the sensing layer of such a system: a set of resource-constrained sensor nodes that capture physical phenomena (temperature, humidity, light) and forward their measurements to a central node (sink/gateway), which connects the sensor network to the wider network. In our project domain, **environmental monitoring for industrial safety**, these concepts map directly: constrained 8-bit nodes measure the local atmosphere of a zone, a gateway aggregates the zone data, and an IoT back end stores, processes and visualizes it.
 
